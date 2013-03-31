@@ -1,3 +1,4 @@
+--run_once("xrandr --output VGA-0 --mode 1280x1024 --pos 0x0 --output LVDS --mode 1024x600 --pos 1280x0")
 run_once(os.getenv("HOME") .. "/.dropbox-dist/dropboxd")
 --run_once("xscreensaver", "-no-splash")
 run_once("skype")

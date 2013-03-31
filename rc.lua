@@ -338,7 +338,9 @@ for s = 1, screen.count() do
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
     mytasklist[s] = awful.widget.tasklist(function(c)
-                                              return awful.widget.tasklist.label.currenttags(c, s)
+                                              args = {}
+                                              args.font = "Terminus 8"
+                                              return awful.widget.tasklist.label.currenttags(c, s, args)
                                           end, mytasklist.buttons2)
 
 --{{---| Chat widget |------------------------------------------------------------------------------
