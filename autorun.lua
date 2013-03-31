@@ -1,0 +1,8 @@
+run_once(os.getenv("HOME") .. "/.dropbox-dist/dropboxd")
+--run_once("xscreensaver", "-no-splash")
+run_once("skype")
+--run_once("xautolock -time 10 -locker 'sh " .. bin .. "lock.sh' &")
+run_once("wmname LG3D")
+run_once("compton -cGb &")
+run_once("(sleep 2 && spacefm -d) &")
+--run_once("wicd-client --tray")
