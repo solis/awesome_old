@@ -63,7 +63,7 @@ function switchNaughtyMonth(switchMonths)
         if (#calendar < 3) then return end
         local swMonths = switchMonths or 1
         calendar[1] = calendar[1] + swMonths
-        calendar[3].box.widgets[2].text = string.format('<span font_desc="%s">%s</span>', "Terminus 9", displayMonth(calendar[1], calendar[2], 2))
+        calendar[3].box.widgets[2].text = string.format('<span font_desc="%s">%s</span>', "Terminus", displayMonth(calendar[1], calendar[2], 2))
 end
 
 function switchNaughtyGoToToday()

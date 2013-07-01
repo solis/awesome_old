@@ -10,6 +10,7 @@ local string = { format = string.format }
 local helpers = require("vicious.helpers")
 local math = {
     min = math.min,
+    max = math.max,
     floor = math.floor
 }
 -- }}}
@@ -25,11 +26,16 @@ local function worker(format, warg)
 
     local battery = helpers.pathtotable("/sys/class/power_supply/"..warg)
     local battery_state = {
-        ["Full\n"]        = "↯",
-        ["Unknown\n"]     = "⌁",
-        ["Charged\n"]     = "↯",
+        ["Full\n"]        = "",
+        ["Unknown\n"]     = "",
+        ["Charged\n"]     = "",
         ["Charging\n"]    = "+",
         ["Discharging\n"] = "-"
+        -- ["Full\n"]        = "↯",
+        -- ["Unknown\n"]     = "⌁",
+        -- ["Charged\n"]     = "↯",
+        -- ["Charging\n"]    = "+",
+        -- ["Discharging\n"] = "-"
     }
 
     -- Check if the battery is present
@@ -56,9 +62,9 @@ local function worker(format, warg)
 
     -- Get charge information
     if battery.current_now then
-        rate = tonumber(battery.current_now)
+        rate = battery.current_now
     elseif battery.power_now then
-        rate = tonumber(battery.power_now)
+        rate = battery.power_now
     else
         return {state, percent, "N/A"}
     end
@@ -66,7 +72,7 @@ local function worker(format, warg)
     -- Calculate remaining (charging or discharging) time
     local time = "N/A"
 
-    if rate ~= nil and rate ~= 0 then
+    if tonumber(rate) then
         if state == "+" then
             timeleft = (tonumber(capacity) - tonumber(remaining)) / tonumber(rate)
         elseif state == "-" then
@@ -75,9 +81,9 @@ local function worker(format, warg)
             return {state, percent, time}
         end
 
-        -- Calculate time
-        local hoursleft   = math.floor(timeleft)
-        local minutesleft = math.floor((timeleft - hoursleft) * 60 )
+        -- Calculate time (but work around broken BAT/ACPI implementations)
+        local hoursleft   = math.max(math.floor(timeleft), 0)
+        local minutesleft = math.max(math.floor((timeleft - hoursleft) * 60 ), 0)
 
         time = string.format("%02d:%02d", hoursleft, minutesleft)
     end

@@ -4,6 +4,9 @@ require("awful.rules")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local vicious = require("vicious")
+require('couth.couth')
+require('couth.alsa')
+require("blingbling")
 require("helpers")
 local calendar = require("calendar")
 
@@ -34,14 +37,14 @@ end
 
 --{{---| Theme |------------------------------------------------------------------------------------
 
-config_dir = ("/home/solis/.config/awesome/")
+config_dir = ("/home/apavlov/.config/awesome/")
 themes_dir = (config_dir .. "/themes")
 beautiful.init(themes_dir .. "/powerarrow/theme.lua")
 
 --{{---| Variables |--------------------------------------------------------------------------------
 
 modkey        = "Mod4"
-terminal      = 'sakura'
+terminal      = 'gnome-terminal'
 editor        = os.getenv("EDITOR") or "vim"
 editor_cmd    = terminal .. " -e " .. editor
 
@@ -57,7 +60,7 @@ iptraf        = "lilyterm -T 'IP traffic monitor' -g 180x54-20+34 -e sudo iptraf
 mailmutt      = "lilyterm -T 'Mutt' -g 140x44-20+34 -e mutt"
 chat          = "TERM=screen-256color lilyterm -T 'Chat' -g 228x62+0+16 -x ~/.gem/ruby/1.9.1/bin/mux start chat"
 browser       = "google-chrome"
-fm            = "spacefm"
+fm            = "nautilus"
 
 local sys = {}
 function sys.suspend()
@@ -138,8 +141,8 @@ naughty.config.presets.critical.opacity    = 0.7
 --{{---| Menu |-------------------------------------------------------------------------------------
 
 myawesomemenu = {
-  {"edit config",           "subl /home/solis/.config/awesome/rc.lua"},
-  {"edit theme",            "subl /home/solis/.config/awesome/themes/powerarrow/theme.lua"},
+  {"edit config",           "sublime_text /home/apavlov/.config/awesome/rc.lua"},
+  {"edit theme",            "sublime_text /home/apavlov/.config/awesome/themes/powerarrow/theme.lua"},
   {"hibernate",             "sudo pm-hibernate"},
   {"restart",               awesome.restart },
   {"reboot",                "sudo reboot"},
@@ -225,7 +228,7 @@ mygraphicsmenu = {
 
 mymultimediamenu = {
   {" DeadBeef",             "deadbeef", beautiful.deadbeef_icon},
-  {" UMPlayer",             "umplayer", beautiful.umplayer_icon},
+--  {" UMPlayer",             "umplayer", beautiful.umplayer_icon},
   {" VLC",                  "vlc", beautiful.vlc_icon}
 }
 
@@ -246,7 +249,7 @@ mywebmenu = {
   {" Firefox",              "firefox", beautiful.firefox_icon},
   {" Luakit",               "luakit", beautiful.luakit_icon},
   --{" Opera",                "opera", beautiful.opera_icon},
-  {" Qbittorrent",          "qbittorrent", beautiful.qbittorrent_icon},
+  --{" Qbittorrent",          "qbittorrent", beautiful.qbittorrent_icon},
   {" Skype",                "skype", beautiful.skype_icon},
   --{" Tor",                  "/home/rom/Tools/tor-browser_en-US/start-tor-browser", beautiful.vidalia_icon},
   {" Thunderbird",          "thunderbird", beautiful.thunderbird_icon},
@@ -263,7 +266,7 @@ mytoolsmenu = {
 }
 
 mymainmenu = awful.menu({ items = { 
-  {" awesome",              myawesomemenu, beautiful.awesome_icon },
+  {" awesome",             myawesomemenu, beautiful.awesome_icon },
   {" books",                mybooksmenu, beautiful.books_icon},
   {" development",          mydevmenu, beautiful.mydevmenu_icon},
   {" education",            myedumenu, beautiful.myedu_icon},
@@ -276,7 +279,7 @@ mymainmenu = awful.menu({ items = {
   {" calc",                 "/usr/bin/gcalctool", beautiful.galculator_icon},
   {" htop",                 terminal .. " -x htop", beautiful.htop_icon},
   {" sound",                "qasmixer", beautiful.wmsmixer_icon},
-  {" file manager",         "spacefm", beautiful.spacefm_icon},
+  {" file manager",         "nautilus", beautiful.spacefm_icon},
   {" root terminal",        "sudo " .. terminal, beautiful.terminalroot_icon},
   {" terminal",             terminal, beautiful.terminal_icon} 
 }
@@ -337,11 +340,31 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
-    mytasklist[s] = awful.widget.tasklist(function(c)
+   mytasklist[s] = awful.widget.tasklist(function(c)
                                               args = {}
                                               args.font = "Terminus 8"
                                               return awful.widget.tasklist.label.currenttags(c, s, args)
                                           end, mytasklist.buttons2)
+
+-- {{{ Keyboard widget
+ -- Keyboard map indicator and changer
+    kbdcfg = {}
+    kbdcfg.layout = { { "us", "" }, { "ru", "" } }
+    kbdcfg.current = 1  -- us is our default layout
+    kbdcfg.widget = widget({ type = "textbox", align = "right" })
+    kbdcfg.widget.text = kbdcfg.layout[kbdcfg.current][1]
+    kbdcfg.switch = function ()
+       kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
+       local t = kbdcfg.layout[kbdcfg.current]
+       kbdcfg.widget.text = t[1]
+    end
+    
+    -- Mouse bindings
+    kbdcfg.widget:buttons(awful.util.table.join(
+        awful.button({ }, 1, function () kbdcfg.switch() end)
+    )) 
+-- }}}
+
 
 --{{---| Chat widget |------------------------------------------------------------------------------
 
@@ -375,6 +398,11 @@ vicious.register(cpuwidget, vicious.widgets.cpu,
 '<span background="#4B696D" font="Terminus 12"> <span font="Terminus 9" color="#DDDDDD">$2% <span color="#888888">·</span> $3% </span></span>', 3)
 cpuicon = widget ({type = "imagebox" })
 cpuicon.image = image(beautiful.widget_cpu)
+blingbling.popups.htop(cpuwidget,
+{ title_color = beautiful.notify_font_color_1, 
+user_color = beautiful.notify_font_color_2, 
+root_color = beautiful.notify_font_color_3, 
+terminal   = "gnome-terminal --geometry=130x56-10+26"})
 
 tempicon = widget ({type = "imagebox" })
 tempicon.image = image(beautiful.widget_temp)
@@ -385,6 +413,14 @@ fsicon.image = image(beautiful.widget_hdd)
 fswidget = widget({ type = "textbox" })
 vicious.register(fswidget, vicious.widgets.fs,
 '<span background="#D0785D" font="Terminus 12"> <span font="Terminus 9" color="#EEEEEE">${/ avail_gb}GB </span></span>', 8)
+udisks_glue = blingbling.udisks_glue.new(beautiful.widget_hdd)
+udisks_glue:set_mount_icon(beautiful.accept)
+udisks_glue:set_umount_icon(beautiful.cancel)
+udisks_glue:set_detach_icon(beautiful.cancel)
+udisks_glue:set_Usb_icon(beautiful.usb)
+udisks_glue:set_Cdrom_icon(beautiful.cdrom)
+awful.widget.layout.margins[udisks_glue.widget] = { top = 0}
+udisks_glue.widget.resize = false
 
 --{{---| Battery widget |---------------------------------------------------------------------------  
 
@@ -398,9 +434,11 @@ vicious.register( batwidget, vicious.widgets.bat, '<span background="#92B0A0" fo
 netwidget = widget({ type = "textbox" })
 vicious.register(netwidget, 
 vicious.widgets.net,
-'<span background="#C2C2A4"> <span font="Terminus 9" color="#FFFFFF">${wlp1s0 down_kb} ↓↑ ${wlp1s0 up_kb}</span> </span>', 3)
+'<span background="#C2C2A4" font="Terminus 12"> <span font="Terminus 9" color="#FFFFFF">${eth1 down_kb} ↓↑ ${eth1 up_kb}</span> </span>', 3)
 neticon = widget ({type = "imagebox" })
 neticon.image = image(beautiful.widget_net)
+netwidget:buttons(awful.util.table.join(awful.button({ }, 1,
+function () awful.util.spawn_with_shell(iptraf) end)))
 
 -- {{{ Date and time
 date_format = "%T"
@@ -451,19 +489,20 @@ mywibox[s].widgets = {
    { mytaglist[s], mypromptbox[s], layout = awful.widget.layout.horizontal.leftright },
      mylayoutbox[s],
      arr1,
+     spr3f,
      datewidget,
      arr2, 
      netwidget,
      neticon,
      arr3,
-     batwidget,
-     baticon,
+     kbdwidget, 
+     --batwidget,
+     --baticon,
      arr4, 
      fswidget,
      fsicon,
+     udisks_glue.widget,
      arr5,
-     memwidget,
-     memicon,
      arr6,
      cpuwidget,
      cpuicon,
@@ -535,12 +574,12 @@ globalkeys = awful.util.table.join(
 
       -- My keys
     awful.key( { modkey }, "b", function() awful.util.spawn( 'google-chrome' ) end),
-    awful.key( { modkey }, "e", function() awful.util.spawn( 'subl' ) end),
+    awful.key( { modkey }, "e", function() awful.util.spawn( 'sublime-text' ) end),
     awful.key( { modkey }, "d", function() awful.util.spawn( '/usr/lib/idea/bin/idea.sh' ) end),
     awful.key( { modkey }, "i", function() awful.util.spawn( 'skype' ) end),
     awful.key( { modkey }, "m", function() awful.util.spawn( 'deadbeef' ) end),
     awful.key( { modkey }, "c", function() awful.util.spawn( 'doublecmd' ) end),
-
+    awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end)
@@ -651,8 +690,12 @@ awful.rules.rules = {
         properties = { floating = true } 
     },
     { 
+        rule = { class = "thunar", name = "File Operation Progress" },
+        properties = { floating = true } 
+    },
+    { 
         rule = { class = "Google-chrome" },
-        properties = { tag = tags[1][2], switchtotag = true, floating = false} 
+        properties = { tag = tags[1][2], switchtotag = true} 
     },
     { 
         rule = { class = "Umplayer" },

@@ -9,6 +9,8 @@
 local setmetatable = setmetatable
 local wrequire = require("vicious.helpers").wrequire
 
+require("vicious.widgets.sensors")
+
 -- Vicious: widgets for the awesome window manager
 module("vicious.widgets")
 -- }}}

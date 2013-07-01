@@ -1,9 +1,13 @@
---run_once("xrandr --output VGA-0 --mode 1280x1024 --pos 0x0 --output LVDS --mode 1024x600 --pos 1280x0")
+--local home   = os.getenv("HOME")
+--local bin    = home .. "/.config/awesome/bin/"
+
+run_once("udisks-glue")
+os.execute("setxkbmap -layout 'us,ru' -variant 'winkeys' -option 'grp:caps_toggle,grp_led:caps,compose:ralt' &")
+run_once("kbdd")
 run_once(os.getenv("HOME") .. "/.dropbox-dist/dropboxd")
---run_once("xscreensaver", "-no-splash")
+run_once("xscreensaver", "-no-splash")
+run_once("nm-applet")
 run_once("skype")
 --run_once("xautolock -time 10 -locker 'sh " .. bin .. "lock.sh' &")
 run_once("wmname LG3D")
-run_once("compton -cGb &")
-run_once("(sleep 2 && spacefm -d) &")
---run_once("wicd-client --tray")
+run_once("xcompmgr -cF &")
