@@ -49,7 +49,6 @@ editor        = os.getenv("EDITOR") or "vim"
 editor_cmd    = terminal .. " -e " .. editor
 
 terminalr     = "sudo terminal --default-working-directory=/root/ --geometry=200x49+80+36"
-configuration = "TERM=screen-256color lilyterm -T 'Awesome Configuration' -g 228x62+0+16 -x ~/.gem/ruby/1.9.1/bin/mux start configuration"
 rttmux        = "sudo gnome-terminal --geometry=220x59+20+36 --default-working-directory=/root/ -x tmux -2"
 ttmux         = "lilyterm -T tmux -g 221x60+20+36 -e tmux -2"
 tetmux        = "terminal --geometry=189x54+20+36 -x tmux -2"
@@ -79,7 +78,7 @@ function sys.logout()
     exec('gnome-session-quit')
 end
 function sys.lock()
-    exec('xscreensaver-command -lock')
+    awful.util.spawn('xscreensaver-command -lock')
 end
 
 -- {{{ Function definition
@@ -406,10 +405,11 @@ terminal   = "gnome-terminal --geometry=130x56-10+26"})
 
 tempicon = widget ({type = "imagebox" })
 tempicon.image = image(beautiful.widget_temp)
-
+thermalwidget = widget({type = "textbox"})
+vicious.register( thermalwidget, vicious.widgets.thermal, " - $1°C", 20, { "coretemp.2", "core"})
 --{{---| FS's widget / udisks-glue menu |-----------------------------------------------------------
-fsicon = widget({type = "imagebox"})
-fsicon.image = image(beautiful.widget_hdd)
+--fsicon = widget({type = "imagebox"})
+--fsicon.image = image(beautiful.widget_hdd)
 fswidget = widget({ type = "textbox" })
 vicious.register(fswidget, vicious.widgets.fs,
 '<span background="#D0785D" font="Terminus 12"> <span font="Terminus 9" color="#EEEEEE">${/ avail_gb}GB </span></span>', 8)
@@ -495,14 +495,16 @@ mywibox[s].widgets = {
      netwidget,
      neticon,
      arr3,
-     kbdwidget, 
+     --kbdcfg.widget, 
      --batwidget,
      --baticon,
      arr4, 
      fswidget,
-     fsicon,
+     --fsicon,
      udisks_glue.widget,
      arr5,
+     --tempicon,
+     --thermalwidget,
      arr6,
      cpuwidget,
      cpuicon,
@@ -579,7 +581,7 @@ globalkeys = awful.util.table.join(
     awful.key( { modkey }, "i", function() awful.util.spawn( 'skype' ) end),
     awful.key( { modkey }, "m", function() awful.util.spawn( 'deadbeef' ) end),
     awful.key( { modkey }, "c", function() awful.util.spawn( 'doublecmd' ) end),
-    awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
+    --awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end)
@@ -695,7 +697,7 @@ awful.rules.rules = {
     },
     { 
         rule = { class = "Google-chrome" },
-        properties = { tag = tags[1][2], switchtotag = true} 
+        properties = { tag = tags[1][2], switchtotag = true, floating = false} 
     },
     { 
         rule = { class = "Umplayer" },
