@@ -14,7 +14,7 @@ white = "#ffffff"
 
 theme = {}
 
-theme.wallpaper_cmd = { "awsetbg /home/solis/.config/awesome/themes/powerarrow/wallpapers/wallpaper-2552963.jpg" }
+theme.wallpaper_cmd = { "awsetbg /home/apavlov/.config/awesome/themes/powerarrow/wallpapers/wallpaper-2552963.jpg" }
 
 theme.font                                  = "Terminus 12"
 theme.fg_normal                             = "#FFFFFF"
@@ -45,7 +45,7 @@ theme.notify_font_color_1                   = green
 theme.notify_font_color_2                   = dblue
 theme.notify_font_color_3                   = black
 theme.notify_font_color_4                   = white
-theme.notify_font                           = "Terminus 9"
+theme.notify_font                           = "Terminus 10"
 theme.notify_fg                             = theme.fg_normal
 theme.notify_bg                             = theme.bg_normal
 theme.notify_border                         = theme.border_focus

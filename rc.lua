@@ -49,7 +49,6 @@ editor        = os.getenv("EDITOR") or "vim"
 editor_cmd    = terminal .. " -e " .. editor
 
 terminalr     = "sudo terminal --default-working-directory=/root/ --geometry=200x49+80+36"
-configuration = "TERM=screen-256color lilyterm -T 'Awesome Configuration' -g 228x62+0+16 -x ~/.gem/ruby/1.9.1/bin/mux start configuration"
 rttmux        = "sudo gnome-terminal --geometry=220x59+20+36 --default-working-directory=/root/ -x tmux -2"
 ttmux         = "lilyterm -T tmux -g 221x60+20+36 -e tmux -2"
 tetmux        = "terminal --geometry=189x54+20+36 -x tmux -2"
@@ -79,7 +78,7 @@ function sys.logout()
     exec('gnome-session-quit')
 end
 function sys.lock()
-    exec('xscreensaver-command -lock')
+    awful.util.spawn('xscreensaver-command -lock')
 end
 
 -- {{{ Function definition
@@ -130,7 +129,7 @@ naughty.config.presets.critical.opacity    = 0.7
  -- Define a tag table which will hold all screen tags.
  tags = {
    names  = { "α", "β", "γ", "δ", "φ", "χ", "ψ", "ω" },
-   layout = { layouts[4], layouts[1], layouts[1], layouts[1], layouts[2], layouts[1],
+   layout = { layouts[4], layouts[1], layouts[1], layouts[1], layouts[5], layouts[1],
               layouts[1], layouts[2]
  }}
  for s = 1, screen.count() do
@@ -149,41 +148,6 @@ myawesomemenu = {
   {"quit",                  awesome.quit }
 }
 
-docsmenu = {
-  {" C",                    "/home/rom/Tools/doc_c", beautiful.c_icon},
-  {" JavaScript",           "/home/rom/Tools/doc_js", beautiful.js_icon},
-  {" Ruby",                 "/home/rom/Tools/doc_ruby", beautiful.ruby_icon} 
-}
-
-learningmenu = {
-  {" C",                    "/home/rom/Books/C.sh", beautiful.c_icon},
-  {" JavaScript",           "/home/rom/Books/JavaScrip.sh", beautiful.js_icon},
-  {" Ruby On Rails",        "/home/rom/Books/RubyOnRails.sh", beautiful.ruby_icon}
-}
-
-mybooksmenu = {
-  {" Documentation",        docsmenu, beautiful.docsmenu_icon},
-  {" Learning",             learningmenu, beautiful.learning_icon},
-  {"                                                            "}, 
-  {" Assembler",            fm .. " ~/Books/Assembler/", beautiful.assembler_icon},
-  {" C",                    fm .. " ~/Books/C/", beautiful.c_icon},
-  {" C++",                  fm .. " ~/Books/C++/", beautiful.cpp_icon},
-  {" D",                    fm .. " ~/Books/D/", beautiful.dlang_icon},
-  {" Databases",            fm .. " ~/Books/Databases/", beautiful.databases_icon},
-  {" Erlang",               fm .. " ~/Books/Erlang/", beautiful.erlang_icon},
-  {" Java",                 fm .. " ~/Books/Java/", beautiful.java_icon},
-  {" JavaScript",           fm .. " ~/Books/JavaScript/", beautiful.js_icon},
-  {" Linux",                fm .. " ~/Books/Linux/", beautiful.linux_icon},
-  {" Markup",               fm .. " ~/Books/HTML-CSS-XML/", beautiful.markup_icon},
-  {" Misc",                 fm .. " ~/Books/Misc/"},
-  {" Mobile Apps",          fm .. " ~/Books/Mobile-Apps/", beautiful.androidmobile_icon},
-  {" Objective-C",          fm .. " ~/Books/Objective-C/"},
-  {" Python",               fm .. " ~/Books/Python/", beautiful.py_icon},
-  {" Regexp",               fm .. " ~/Books/Regexp/"},
-  {" Ruby",                 fm .. " ~/Books/Ruby/", beautiful.ruby_icon},
-  {" VCS",                  fm .. " ~/Books/VCS"}
-}
-
 myedumenu = {
   {" Anki",                 "anki", beautiful.anki_icon},
   -- {" Celestia",             "celestia", beautiful.celestia_icon},
@@ -200,7 +164,8 @@ myedumenu = {
 
 mydevmenu = {
 --  {" Android SDK Updater",  "android", beautiful.android_icon},
---  {" Eclipse",              "/home/rom/Tools/eclipse/eclipse", beautiful.eclipse_icon},
+  {" Eclipse",              "env GTK2_RC_FILES=/usr/share/themes/Clearlooks/gtk-2.0/gtkrc:/home/apavlov/.gtkrc-eclipse '/home/apavlov/exadel/eclipse/eclipse' -showlocation", beautiful.eclipse_icon},
+  --{" Eclipse",              "/home/apavlov/exadel/eclipse/eclipse", beautiful.eclipse_icon},
 --  {" Emacs",                "emacs", beautiful.emacs_icon},
 --  {" GHex",                 "ghex", beautiful.ghex_icon},	
   {" IntellijIDEA",         "/usr/lib/idea/bin/idea.sh", beautiful.ideaUE_icon},
@@ -219,16 +184,10 @@ mygraphicsmenu = {
   {" gcolor2",              "gcolor2", beautiful.gcolor_icon},
   {" Gpick",                "gpick", beautiful.gpick_icon},
   {" Gimp",                 "gimp", beautiful.gimp_icon},
---  {" Inkscape",             "inkscape", beautiful.inkscape_icon},
---  {" recordMyDesktop",      "gtk-recordMyDesktop", beautiful.recordmydesktop_icon},
---  {" Screengrab",           "screengrab", beautiful.screengrab_icon},
---  {" Xmag",                 "xmag", beautiful.xmag_icon},
---  {" XnView",               "/home/rom/Tools/XnView/xnview.sh", beautiful.xnview_icon}
 }
 
 mymultimediamenu = {
   {" DeadBeef",             "deadbeef", beautiful.deadbeef_icon},
---  {" UMPlayer",             "umplayer", beautiful.umplayer_icon},
   {" VLC",                  "vlc", beautiful.vlc_icon}
 }
 
@@ -256,7 +215,8 @@ mywebmenu = {
 }
 
 mysettingsmenu = {
-  {" WICD",                 terminal .. " -x wicd-curses", beautiful.wicd_icon}
+  {" WICD",                 terminal .. " -x wicd-curses", beautiful.wicd_icon},
+  {" Gnome Control Center", "gnome-control-center"}
 }
 
 mytoolsmenu = {
@@ -266,8 +226,7 @@ mytoolsmenu = {
 }
 
 mymainmenu = awful.menu({ items = { 
-  {" awesome",             myawesomemenu, beautiful.awesome_icon },
-  {" books",                mybooksmenu, beautiful.books_icon},
+  {" awesome",              myawesomemenu, beautiful.awesome_icon },
   {" development",          mydevmenu, beautiful.mydevmenu_icon},
   {" education",            myedumenu, beautiful.myedu_icon},
   {" graphics",             mygraphicsmenu, beautiful.mygraphicsmenu_icon},
@@ -406,10 +365,11 @@ terminal   = "gnome-terminal --geometry=130x56-10+26"})
 
 tempicon = widget ({type = "imagebox" })
 tempicon.image = image(beautiful.widget_temp)
-
+thermalwidget = widget({type = "textbox"})
+vicious.register( thermalwidget, vicious.widgets.thermal, " - $1°C", 20, { "coretemp.2", "core"})
 --{{---| FS's widget / udisks-glue menu |-----------------------------------------------------------
-fsicon = widget({type = "imagebox"})
-fsicon.image = image(beautiful.widget_hdd)
+--fsicon = widget({type = "imagebox"})
+--fsicon.image = image(beautiful.widget_hdd)
 fswidget = widget({ type = "textbox" })
 vicious.register(fswidget, vicious.widgets.fs,
 '<span background="#D0785D" font="Terminus 12"> <span font="Terminus 9" color="#EEEEEE">${/ avail_gb}GB </span></span>', 8)
@@ -495,14 +455,16 @@ mywibox[s].widgets = {
      netwidget,
      neticon,
      arr3,
-     kbdwidget, 
+     --kbdcfg.widget, 
      --batwidget,
      --baticon,
      arr4, 
      fswidget,
-     fsicon,
+     --fsicon,
      udisks_glue.widget,
      arr5,
+     --tempicon,
+     --thermalwidget,
      arr6,
      cpuwidget,
      cpuicon,
@@ -574,12 +536,12 @@ globalkeys = awful.util.table.join(
 
       -- My keys
     awful.key( { modkey }, "b", function() awful.util.spawn( 'google-chrome' ) end),
-    awful.key( { modkey }, "e", function() awful.util.spawn( 'sublime-text' ) end),
+    awful.key( { modkey }, "e", function() awful.util.spawn( 'subl' ) end),
     awful.key( { modkey }, "d", function() awful.util.spawn( '/usr/lib/idea/bin/idea.sh' ) end),
     awful.key( { modkey }, "i", function() awful.util.spawn( 'skype' ) end),
     awful.key( { modkey }, "m", function() awful.util.spawn( 'deadbeef' ) end),
     awful.key( { modkey }, "c", function() awful.util.spawn( 'doublecmd' ) end),
-    awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
+    --awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end)
@@ -695,7 +657,7 @@ awful.rules.rules = {
     },
     { 
         rule = { class = "Google-chrome" },
-        properties = { tag = tags[1][2], switchtotag = true} 
+        properties = { tag = tags[1][2], switchtotag = true, floating = false} 
     },
     { 
         rule = { class = "Umplayer" },
@@ -737,13 +699,17 @@ awful.rules.rules = {
         rule = { name = ".Sublime Text 2." },
         properties = { tag = tags[1][4], switchtotag = true, switchtotag = true, maximized_vertical = true, maximized_horizontal = true, floating = false} 
     },
+    { 
+        rule = { class = "Sublime_text" },
+        properties = { tag = tags[1][4], switchtotag = true, switchtotag = true, maximized_vertical = true, maximized_horizontal = true, floating = false} 
+    },
     {
         rule = { class = "Gimp" },
         properties = { floating = true } 
     },
     {
         rule = { class = "Skype"},
-        properties = { tag = tags[1][6], floating = true },
+        properties = { tag = tags[1][6], floating = true},
         callback = function(c)
             local w = screen[c.screen].workarea.width
             local h = screen[c.screen].workarea.height
@@ -751,6 +717,11 @@ awful.rules.rules = {
             c.x = 0
             c.y = 0
         end
+    },
+    {
+        rule = { class = "Skype"},
+        except_any = { role = { "ConversationsWindow", "CallWindow", "Options" } },
+        callback = awful.titlebar.add 
     },
     {
         rule = { class = "Skype", role = "ConversationsWindow" },
