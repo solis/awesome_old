@@ -9,6 +9,7 @@ require('couth.alsa')
 require("blingbling")
 require("helpers")
 local calendar = require("calendar")
+awful.widget.gmail = require('awful.widget.gmail')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -299,7 +300,7 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
-   mytasklist[s] = awful.widget.tasklist(function(c)
+    mytasklist[s] = awful.widget.tasklist(function(c)
                                               args = {}
                                               args.font = "Terminus 8"
                                               return awful.widget.tasklist.label.currenttags(c, s, args)
@@ -333,11 +334,21 @@ chaticon:buttons(awful.util.table.join(awful.button({ }, 1,
 function () awful.util.spawn_with_shell(chat) end)))
 
 --{{---| Mail widget |------------------------------------------------------------------------------
-
+mygmail = widget({ type = "textbox" })
 mailicon = widget ({type = "imagebox" })
 mailicon.image = image(beautiful.widget_mail)
+
+
+vicious.register(mygmail, vicious.widgets.gmail,
+                function (widget, args)
+                    return args["{count}"]
+                end,  120) 
+                --the '120' here means check every 2 minutes.
+
 mailicon:buttons(awful.util.table.join(awful.button({ }, 1, 
-function () awful.util.spawn_with_shell(mailmutt) end)))
+function () awful.util.spawn("google-chrome www.gmail.com") end)))
+
+gmailwidget = awful.widget.gmail.new()
 
 --{{---| Music widget |-----------------------------------------------------------------------------
 
@@ -394,20 +405,31 @@ vicious.register( batwidget, vicious.widgets.bat, '<span background="#92B0A0" fo
 netwidget = widget({ type = "textbox" })
 vicious.register(netwidget, 
 vicious.widgets.net,
-'<span background="#C2C2A4" font="Terminus 12"> <span font="Terminus 9" color="#FFFFFF">${eth1 down_kb} ↓↑ ${eth1 up_kb}</span> </span>', 3)
+'<span background="#92B0A0" font="Terminus 12"> <span font="Terminus 9" color="#FFFFFF">${eth1 down_kb} ↓↑ ${eth1 up_kb}</span> </span>', 3)
 neticon = widget ({type = "imagebox" })
 neticon.image = image(beautiful.widget_net)
 netwidget:buttons(awful.util.table.join(awful.button({ }, 1,
 function () awful.util.spawn_with_shell(iptraf) end)))
 
 -- {{{ Date and time
-date_format = "%T"
+time_format = "%T"
 -- Initialize widget
-datewidget = widget({ type = "textbox" })
+timewidget = widget({ type = "textbox" })
 -- Register widget
-vicious.register(datewidget, vicious.widgets.date, '<span background="#777E76" font="Terminus 12"> <span font="Terminus 10" color="#FFFFFF">%T</span> </span>', 1)
+vicious.register(timewidget, vicious.widgets.date, '<span background="#777E76" font="Terminus 12"> <span font="Terminus 10" color="#FFFFFF">' .. time_format .. '</span> </span>', 1)
+
+date_format = "%a, %d %b %Y"
+
+datewidget = widget({ type = "textbox" })
+
+vicious.register(datewidget, vicious.widgets.date, '<span background="#C2C2A4" font="Terminus 12"> <span font="Terminus 9" color="#FFFFFF">' .. date_format .. '</span> </span>', 1)
 
 calendar.addCalendarToWidget(datewidget, setFg("green", "<b>%s</b>"))
+-- }}}
+
+-- {{{ Gmail widget
+-- gmail widget and tooltip
+
 -- }}}
 
 
@@ -450,11 +472,12 @@ mywibox[s].widgets = {
      mylayoutbox[s],
      arr1,
      spr3f,
-     datewidget,
+     timewidget,
      arr2, 
+     datewidget,
+     arr3,
      netwidget,
      neticon,
-     arr3,
      --kbdcfg.widget, 
      --batwidget,
      --baticon,
@@ -463,6 +486,9 @@ mywibox[s].widgets = {
      --fsicon,
      udisks_glue.widget,
      arr5,
+--     mygmail,
+--     mailicon,
+	 gmailwidget,	 
      --tempicon,
      --thermalwidget,
      arr6,
@@ -677,7 +703,14 @@ awful.rules.rules = {
     },
     { 
         rule = { class = "Doublecmd" },
-        properties = { tag = tags[1][5] } 
+        properties = { tag = tags[1][5] },
+        callback = function(c)
+            local w = screen[c.screen].workarea.width
+            local h = screen[c.screen].workarea.height
+            c:geometry({ width = w, height = h })
+            c.x = 0
+            c.y = 0
+        end 
     },
     { 
         rule = { class = "Doublecmd", type = "dialog" },
