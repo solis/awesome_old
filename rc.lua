@@ -45,7 +45,7 @@ beautiful.init(themes_dir .. "/powerarrow/theme.lua")
 --{{---| Variables |--------------------------------------------------------------------------------
 
 modkey        = "Mod4"
-terminal      = 'gnome-terminal'
+terminal      = 'urxvt'
 editor        = os.getenv("EDITOR") or "vim"
 editor_cmd    = terminal .. " -e " .. editor
 
@@ -59,8 +59,8 @@ musicplr      = "lilyterm -T Music -g 130x34-320+16 -e ncmpcpp"
 iptraf        = "lilyterm -T 'IP traffic monitor' -g 180x54-20+34 -e sudo iptraf-ng -i all"
 mailmutt      = "lilyterm -T 'Mutt' -g 140x44-20+34 -e mutt"
 chat          = "TERM=screen-256color lilyterm -T 'Chat' -g 228x62+0+16 -x ~/.gem/ruby/1.9.1/bin/mux start chat"
-browser       = "google-chrome"
-fm            = "nautilus"
+browser       = "firefox"
+fm            = "mc"
 
 local sys = {}
 function sys.suspend()
@@ -76,7 +76,7 @@ function sys.shutdown()
     exec('dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop')
 end
 function sys.logout()
-    exec('gnome-session-quit')
+    awful.util.spawn('gnome-session-quit')
 end
 function sys.lock()
     awful.util.spawn('xscreensaver-command -lock')
@@ -372,7 +372,7 @@ blingbling.popups.htop(cpuwidget,
 { title_color = beautiful.notify_font_color_1, 
 user_color = beautiful.notify_font_color_2, 
 root_color = beautiful.notify_font_color_3, 
-terminal   = "gnome-terminal --geometry=130x56-10+26"})
+terminal   = "rxvt --geometry=130x56-10+26"})
 
 tempicon = widget ({type = "imagebox" })
 tempicon.image = image(beautiful.widget_temp)
@@ -561,7 +561,7 @@ globalkeys = awful.util.table.join(
     end),
 
       -- My keys
-    awful.key( { modkey }, "b", function() awful.util.spawn( 'google-chrome' ) end),
+    awful.key( { modkey }, "b", function() awful.util.spawn( 'firefox' ) end),
     awful.key( { modkey }, "e", function() awful.util.spawn( 'subl' ) end),
     awful.key( { modkey }, "d", function() awful.util.spawn( '/usr/lib/idea/bin/idea.sh' ) end),
     awful.key( { modkey }, "i", function() awful.util.spawn( 'skype' ) end),
@@ -597,6 +597,15 @@ clientkeys = awful.util.table.join(
         function (c)
             c.maximized_horizontal = not c.maximized_horizontal
             c.maximized_vertical   = not c.maximized_vertical
+        end),
+    -- all minimized clients are restored 
+    awful.key({ modkey, "Shift"   }, "n", 
+        function()
+            local tag = awful.tag.selected()
+                for i=1, #tag:clients() do
+                    tag:clients()[i].minimized=false
+                    tag:clients()[i]:redraw()
+                end
         end)
 )
 
@@ -662,6 +671,10 @@ awful.rules.rules = {
         properties = { floating = true } 
     },
     { 
+        rule = { class = "Firefox", type = "Dialog" },
+        properties = { floating = true } 
+    },
+    { 
         rule = { class = "dialog" },
         properties = { floating = true } 
     },
@@ -686,6 +699,14 @@ awful.rules.rules = {
         properties = { tag = tags[1][2], switchtotag = true, floating = false} 
     },
     { 
+        rule = { class = "Firefox" },
+        properties = { tag = tags[1][2], switchtotag = true, floating = false} 
+    },
+    { 
+        rule = { class = "Firefox", role = "Preferences" },
+        properties = { tag = tags[1][2], floating = true} 
+    },
+    { 
         rule = { class = "Umplayer" },
         properties = { tag = tags[1][7] } 
     },
@@ -700,6 +721,17 @@ awful.rules.rules = {
     { 
         rule = { class = "jetbrains-idea" },
         properties = { tag = tags[1][3], switchtotag = true } 
+    },
+    { 
+        rule = { class = "Doublecmd" },
+        properties = { tag = tags[1][5] },
+        callback = function(c)
+            local w = screen[c.screen].workarea.width
+            local h = screen[c.screen].workarea.height
+            c:geometry({ width = w, height = h })
+            c.x = 0
+            c.y = 0
+        end 
     },
     { 
         rule = { class = "Doublecmd" },
