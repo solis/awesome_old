@@ -140,7 +140,7 @@ naughty.config.presets.critical.opacity    = 0.7
 
 --{{---| Menu |-------------------------------------------------------------------------------------
 
-myawesomemenu = {
+awesomemenu = {
   {"edit config",           "sublime_text /home/apavlov/.config/awesome/rc.lua"},
   {"edit theme",            "sublime_text /home/apavlov/.config/awesome/themes/powerarrow/theme.lua"},
   {"hibernate",             "sudo pm-hibernate"},
@@ -149,7 +149,7 @@ myawesomemenu = {
   {"quit",                  awesome.quit }
 }
 
-myedumenu = {
+edumenu = {
   {" Anki",                 "anki", beautiful.anki_icon},
   -- {" Celestia",             "celestia", beautiful.celestia_icon},
   -- {" Geogebra",             "geogebra", beautiful.geogebra_icon},
@@ -163,7 +163,7 @@ myedumenu = {
   --{" XMind",                "xmind", beautiful.xmind_icon}
 }
 
-mydevmenu = {
+devmenu = {
 --  {" Android SDK Updater",  "android", beautiful.android_icon},
   {" Eclipse",              "env GTK2_RC_FILES=/usr/share/themes/Clearlooks/gtk-2.0/gtkrc:/home/apavlov/.gtkrc-eclipse '/home/apavlov/exadel/eclipse/eclipse' -showlocation", beautiful.eclipse_icon},
   --{" Eclipse",              "/home/apavlov/exadel/eclipse/eclipse", beautiful.eclipse_icon},
@@ -179,7 +179,7 @@ mydevmenu = {
 --  {" Tkdiff",               "tkdiff", beautiful.tkdiff_icon}
 }
 
-mygraphicsmenu = {
+graphicsmenu = {
   {" Character Map",        "gucharmap", beautiful.gucharmap_icon},
   {" Fonty Python",         "fontypython", beautiful.fontypython_icon},
   {" gcolor2",              "gcolor2", beautiful.gcolor_icon},
@@ -187,12 +187,12 @@ mygraphicsmenu = {
   {" Gimp",                 "gimp", beautiful.gimp_icon},
 }
 
-mymultimediamenu = {
+multimediamenu = {
   {" DeadBeef",             "deadbeef", beautiful.deadbeef_icon},
   {" VLC",                  "vlc", beautiful.vlc_icon}
 }
 
-myofficemenu = {
+officemenu = {
   {" Acrobat Reader",       "acroread", beautiful.acroread_icon},
   {" DjView",               "djview", beautiful.djview_icon},
   {" LibreOffice Base",     "libreoffice --base", beautiful.librebase_icon},
@@ -203,9 +203,9 @@ myofficemenu = {
   {" LibreOffice Writer",   "libreoffice --writer", beautiful.librewriter_icon},
 }
 
-mywebmenu = {
+webmenu = {
   {" Chrome",               "google-chrome", beautiful.chromium_icon},
-  {" Droppox",              "dropbox", beautiful.dropbox_icon},
+  {" Dropbox",              "dropbox", beautiful.dropbox_icon},
   {" Firefox",              "firefox", beautiful.firefox_icon},
   {" Luakit",               "luakit", beautiful.luakit_icon},
   --{" Opera",                "opera", beautiful.opera_icon},
@@ -215,27 +215,27 @@ mywebmenu = {
   {" Thunderbird",          "thunderbird", beautiful.thunderbird_icon},
 }
 
-mysettingsmenu = {
+settingsmenu = {
   {" WICD",                 terminal .. " -x wicd-curses", beautiful.wicd_icon},
   {" Gnome Control Center", "gnome-control-center"}
 }
 
-mytoolsmenu = {
+toolsmenu = {
   {" Gparted",              "sudo gparted", beautiful.gparted_icon},
-  {" PeaZip",               "peazip", beautiful.peazip_icon},
-  {" TeamViewer",           "teamviewer", beautiful.teamviewer_icon}
+  --{" PeaZip",               "peazip", beautiful.peazip_icon},
+  --{" TeamViewer",           "teamviewer", beautiful.teamviewer_icon}
 }
 
-mymainmenu = awful.menu({ items = { 
-  {" awesome",              myawesomemenu, beautiful.awesome_icon },
-  {" development",          mydevmenu, beautiful.mydevmenu_icon},
-  {" education",            myedumenu, beautiful.myedu_icon},
-  {" graphics",             mygraphicsmenu, beautiful.mygraphicsmenu_icon},
-  {" multimedia",           mymultimediamenu, beautiful.mymultimediamenu_icon},	    
-  {" office",               myofficemenu, beautiful.myofficemenu_icon},
-  {" tools",                mytoolsmenu, beautiful.mytoolsmenu_icon},
-  {" web",                  mywebmenu, beautiful.mywebmenu_icon},
-  {" settings",             mysettingsmenu, beautiful.mysettingsmenu_icon},
+mainmenu = awful.menu({ items = { 
+  {" awesome",              awesomemenu, beautiful.awesome_icon },
+  {" development",          devmenu, beautiful.devmenu_icon},
+  {" education",            edumenu, beautiful.edu_icon},
+  {" graphics",             graphicsmenu, beautiful.graphicsmenu_icon},
+  {" multimedia",           multimediamenu, beautiful.multimediamenu_icon},	    
+  {" office",               officemenu, beautiful.officemenu_icon},
+  {" tools",                toolsmenu, beautiful.toolsmenu_icon},
+  {" web",                  webmenu, beautiful.webmenu_icon},
+  {" settings",             settingsmenu, beautiful.settingsmenu_icon},
   {" calc",                 "/usr/bin/gcalctool", beautiful.galculator_icon},
   {" htop",                 terminal .. " -x htop", beautiful.htop_icon},
   {" sound",                "qasmixer", beautiful.wmsmixer_icon},
@@ -245,16 +245,16 @@ mymainmenu = awful.menu({ items = {
 }
 })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.clear_icon), menu = mymainmenu })
+launcher = awful.widget.launcher({ image = image(beautiful.clear_icon), menu = mainmenu })
 
 --{{---| Wibox |------------------------------------------------------------------------------------
 
-mysystray = widget({ type = "systray" })
-mywibox = {}
-mypromptbox = {}
-mylayoutbox = {}
-mytaglist = {}
-mytaglist.buttons = awful.util.table.join(
+systray = widget({ type = "systray" })
+wibox = {}
+promptbox = {}
+layoutbox = {}
+taglist = {}
+taglist.buttons = awful.util.table.join(
                     awful.button({ }, 1, awful.tag.viewonly),
                     awful.button({ modkey }, 1, awful.client.movetotag),
                     awful.button({ }, 3, awful.tag.viewtoggle),
@@ -262,8 +262,8 @@ mytaglist.buttons = awful.util.table.join(
                     awful.button({ }, 4, awful.tag.viewnext),
                     awful.button({ }, 5, awful.tag.viewprev)
                     )
-mytasklist = {}
-mytasklist.buttons = awful.util.table.join(
+tasklist = {}
+tasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
                                               if c == client.focus then
                                                   c.minimized = true
@@ -292,19 +292,19 @@ mytasklist.buttons = awful.util.table.join(
                                               if client.focus then client.focus:raise() end
                                           end))
 for s = 1, screen.count() do
-    mypromptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
-    mylayoutbox[s] = awful.widget.layoutbox(s)
-    mylayoutbox[s]:buttons(awful.util.table.join(
+    promptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+    layoutbox[s] = awful.widget.layoutbox(s)
+    layoutbox[s]:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
-    mytasklist[s] = awful.widget.tasklist(function(c)
+    taglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, taglist.buttons)
+    tasklist[s] = awful.widget.tasklist(function(c)
                                               args = {}
                                               args.font = "Terminus 8"
                                               return awful.widget.tasklist.label.currenttags(c, s, args)
-                                          end, mytasklist.buttons2)
+                                          end, tasklist.buttons2)
 
 -- {{{ Keyboard widget
  -- Keyboard map indicator and changer
@@ -334,12 +334,12 @@ chaticon:buttons(awful.util.table.join(awful.button({ }, 1,
 function () awful.util.spawn_with_shell(chat) end)))
 
 --{{---| Mail widget |------------------------------------------------------------------------------
-mygmail = widget({ type = "textbox" })
+gmail = widget({ type = "textbox" })
 mailicon = widget ({type = "imagebox" })
 mailicon.image = image(beautiful.widget_mail)
 
 
-vicious.register(mygmail, vicious.widgets.gmail,
+vicious.register(gmail, vicious.widgets.gmail,
                 function (widget, args)
                     return args["{count}"]
                 end,  120) 
@@ -465,11 +465,11 @@ arr0.image = image(beautiful.arr0)
 
 --{{---| Panel |------------------------------------------------------------------------------------
 
-mywibox[s] = awful.wibox({ position = "top", screen = s, height = "16" })
+wibox[s] = awful.wibox({ position = "top", screen = s, height = "16" })
 
-mywibox[s].widgets = {
-   { mytaglist[s], mypromptbox[s], layout = awful.widget.layout.horizontal.leftright },
-     mylayoutbox[s],
+wibox[s].widgets = {
+   { taglist[s], promptbox[s], layout = awful.widget.layout.horizontal.leftright },
+     layoutbox[s],
      arr1,
      spr3f,
      timewidget,
@@ -486,7 +486,7 @@ mywibox[s].widgets = {
      --fsicon,
      udisks_glue.widget,
      arr5,
---     mygmail,
+--     gmail,
 --     mailicon,
 	 gmailwidget,	 
      --tempicon,
@@ -496,7 +496,7 @@ mywibox[s].widgets = {
      cpuicon,
      arr7,
     -- arr8,
-     s == 1 and mysystray, spr or nil, mytasklist[s], 
+     s == 1 and systray, spr or nil, tasklist[s], 
      layout = awful.widget.layout.horizontal.rightleft } end
 
 -- {{{ Mouse bindings
@@ -524,7 +524,7 @@ globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
+    awful.key({ modkey,           }, "w", function () mainmenu:show({keygrabber=true}) end),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
@@ -570,7 +570,7 @@ globalkeys = awful.util.table.join(
     --awful.key( {   },  "caps_toggle",     function () kbdcfg.switch() end),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end)
+    awful.key({ modkey },            "r",     function () promptbox[mouse.screen]:run() end)
 )
 
 clientkeys = awful.util.table.join(
